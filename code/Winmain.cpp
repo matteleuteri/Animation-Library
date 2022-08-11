@@ -1,76 +1,6 @@
 #include "headers/Winmain.h"
 
-static HRESULT LoadBitmapFromFile(IWICImagingFactory *pIWICFactory, LPCWSTR uri, UINT destinationWidth, UINT destinationHeight, ID2D1Bitmap **ppBitmap)
-{
-    IWICBitmapDecoder *pDecoder = NULL;
-    IWICBitmapFrameDecode *pSource = NULL;
-    IWICFormatConverter *pConverter = NULL;
 
-    HRESULT hr = pIWICFactory->CreateDecoderFromFilename(uri, NULL, GENERIC_READ, WICDecodeMetadataCacheOnLoad, &pDecoder);
-
-    if(SUCCEEDED(hr))
-    {
-        hr = pDecoder->GetFrame(0, &pSource);
-    }
-    if(SUCCEEDED(hr))
-    {
-        hr = pIWICFactory->CreateFormatConverter(&pConverter);
-    }
-    if(SUCCEEDED(hr))
-    {
-        hr = pConverter->Initialize(pSource, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, NULL, 0.f, WICBitmapPaletteTypeMedianCut);
-    }
-    if(SUCCEEDED(hr))
-    {
-        hr = renderTarget->CreateBitmapFromWicBitmap(pConverter, ppBitmap);
-    }
-    return hr;
-}
-
-static IWICImagingFactory* createResources(HWND hwnd, RECT* rc)
-{
-    ID2D1Factory* pD2DFactory = NULL;
-
-    // both lines below return HRESULT, I should make sure they succeed
-    D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &pD2DFactory);
-    D2D1_SIZE_U clientSize = D2D1::SizeU(rc->right - rc->left, rc->bottom - rc->top);
-    pD2DFactory->CreateHwndRenderTarget(D2D1::RenderTargetProperties(), D2D1::HwndRenderTargetProperties(hwnd, clientSize), &renderTarget);
-  
-    HRESULT hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), reinterpret_cast<IUnknown**>(&pDWriteFactory_));
-
-    hr = pDWriteFactory_->CreateTextFormat(L"Gabriola", NULL, DWRITE_FONT_WEIGHT_REGULAR, 
-                DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 20.0f, L"en-us", &pTextFormat_);
-
-    if (SUCCEEDED(hr))
-    {
-        hr = pTextFormat_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-    }
-
-    if (SUCCEEDED(hr))
-    {
-        hr = pTextFormat_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
-    }
-
-    IWICImagingFactory *pIWICFactory = NULL; 
-    CoInitializeEx(NULL, COINIT_MULTITHREADED); 
-    CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pIWICFactory));    
-    
-    return pIWICFactory;
-}
-
-static std::vector<ID2D1Bitmap*> loadBitmapVector(IWICImagingFactory* pIWICFactory, std::vector<std::string>& assetNames)
-{
-    std::vector<ID2D1Bitmap*> bitmapVector = {};
-    for(auto& asset : assetNames)
-    {
-        p /= asset;
-        ID2D1Bitmap *currBitmap;
-        LoadBitmapFromFile(pIWICFactory, p.c_str(), 20, 20, &currBitmap);  
-        p.remove_filename();
-        bitmapVector.push_back(currBitmap);
-    }
-    return bitmapVector;
-}
 
 static void handleKeyDown(WPARAM wParam)
 {
@@ -141,7 +71,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
 {
-    const wchar_t CLASS_NAME[]  = L"In The Clouds";
+    const wchar_t CLASS_NAME[]  = L"Animation Library";
     
     WNDCLASS wc = { };
     wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
@@ -171,10 +101,25 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
             // wchar_t fnameBuffer[MAX_PATH];
             // GetModuleFileName(NULL, fnameBuffer, MAX_PATH);
 
-            IWICImagingFactory* pIWICFactory = createResources(hwnd, &rc);
+            // IWICImagingFactory* pIWICFactory = createResources(hwnd, &rc);
 
-            // JsonParser *jp = new JsonParser("ResourceTree.json");
-            // jp->parse();
+            // this is where the animation library would load bitmaps from file names.
+
+            
+            
+            AnimationController* animationController = new AnimationController(hwnd, &rc, &p);
+            Animation* animation = new Animation(hwnd, &rc, { "image1.png", "image2.png", "image3.png", "image4.png" }, GetTickCount(), 100);
+            animationController->loadAnimation("EXAMPLE", animation);
+
+
+
+
+
+
+
+            // AnimationController* animationController = new AnimationController();
+            // GameObject* go = new GameObject(animationController, 200.0f, 200.0f, 0.5f);
+
 
             // std::vector<std::string> playerIdleAssetNames = { "player2_idle_01.png", "player2_idle_02.png", "player2_idle_03.png" };
             // std::vector<ID2D1Bitmap*> playerIdleBitmaps = loadBitmapVector(pIWICFactory, playerIdleAssetNames);
