@@ -5,10 +5,10 @@ Scene::Scene(int32_t currentTime, bool active, std::vector<AnimationController*>
     lastTimestamp = GetTickCount();
 }
 
-static void drawBM(ID2D1HwndRenderTarget* renderTarget, GameObject *g)
+void Scene::drawBM(ID2D1HwndRenderTarget* renderTarget, GameObject *g)
 {
-    renderTarget->DrawBitmap(g->animation->bitmaps[g->animation->currentBitmapIndex], 
-                D2D1::RectF(g->x, g->y, g->x + g->width, g->y + g->height));
+    // renderTarget->DrawBitmap(g->animation->bitmaps[g->animation->currentBitmapIndex], 
+                // D2D1::RectF(g->x, g->y, g->x + g->width, g->y + g->height));
 }
 
 void Scene::updateState(HWND hwnd, int32_t endTime, int32_t startTime)
@@ -20,8 +20,6 @@ void Scene::renderState(HWND hwnd, ID2D1HwndRenderTarget* renderTarget, IDWriteT
 {
     renderTarget->BeginDraw();
     renderTarget->Clear(D2D1::ColorF(D2D1::ColorF::Black));
-    
-
 
     renderTarget->EndDraw();  
 }

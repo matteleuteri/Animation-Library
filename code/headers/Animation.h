@@ -12,8 +12,7 @@ public:
     int currentBitmapIndex;
     int64_t timeSince;
     int64_t timeFrame;
-    std::vector<std::string> fileNames;
-    Animation::Animation(HWND hwnd, RECT* rc, std::vector<std::string> fileNames, int64_t timeSince, int64_t timeFrame);
+    Animation::Animation(std::vector<ID2D1Bitmap*> bitmaps, int64_t timeSince, int64_t timeFrame);
 };
 
 #endif

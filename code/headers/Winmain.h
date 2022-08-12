@@ -16,5 +16,5 @@
 #include <combaseapi.h>
 #include <Objbase.h>
 #include "GameObject.h"
+
 static bool isRunning;
-std::filesystem::path p;

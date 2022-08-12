@@ -30,6 +30,7 @@ public:
     Scene::Scene(int32_t currentTime, bool active, std::vector<AnimationController*> animationControllers, float x, float y, RECT *rc);
     void Scene::renderState(HWND hwnd, ID2D1HwndRenderTarget* renderTarget, IDWriteTextFormat* pTextFormat_);
     void Scene::updateState(HWND hwnd, int32_t startTime, int32_t endTime); 
+    void Scene::drawBM(ID2D1HwndRenderTarget* renderTarget, GameObject *g);
 };
 
 #endif

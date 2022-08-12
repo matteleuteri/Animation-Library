@@ -1,8 +1,5 @@
 #include "headers/AnimationController.h"
 
-
-
-
 HRESULT AnimationController::LoadBitmapFromFile(LPCWSTR uri, UINT destinationWidth, UINT destinationHeight, ID2D1Bitmap **ppBitmap)
 {
     IWICBitmapDecoder *pDecoder = NULL;
@@ -49,7 +46,6 @@ void AnimationController::createResources(HWND hwnd, RECT* rc)
     D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &pD2DFactory);
     D2D1_SIZE_U clientSize = D2D1::SizeU(rc->right - rc->left, rc->bottom - rc->top);
     pD2DFactory->CreateHwndRenderTarget(D2D1::RenderTargetProperties(), D2D1::HwndRenderTargetProperties(hwnd, clientSize), &renderTarget);
-    IWICImagingFactory *pIWICFactory = NULL; 
     CoInitializeEx(NULL, COINIT_MULTITHREADED); 
     CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pIWICFactory));    
 }
@@ -59,11 +55,10 @@ AnimationController::AnimationController(HWND hwnd, RECT* rc, std::filesystem::p
     createResources(hwnd, rc);
 }
 
-void AnimationController::loadAnimation(std::string, Animation* animation)
+void AnimationController::loadAnimation(std::vector<std::string> strings, std::string name, DWORD creationTime, int timeFrame)
 {
-    std::vector<ID2D1Bitmap*> bitmapVector = loadBitmapVector(animation->fileNames);
-
-
-
-
+    std::vector<ID2D1Bitmap*> bitmapVector = loadBitmapVector(strings);
+    // use the bitmap vector ot create an animation, then add it to the controller's animations component
+    Animation* animation = new Animation(bitmapVector, creationTime, timeFrame);
+    animationMap[name] = animation;
 }
