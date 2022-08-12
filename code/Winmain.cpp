@@ -10,7 +10,6 @@ static void handleKeyDown(WPARAM wParam)
     {
         go->animationController->setAnimation("EXAMPLE1");
     }
-
 }
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -50,6 +49,15 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     return result;
 }
 
+void createResources(HWND hwnd, RECT* rc) {
+    ID2D1Factory* pD2DFactory = nullptr;
+    D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &pD2DFactory);
+    D2D1_SIZE_U clientSize = D2D1::SizeU(rc->right - rc->left, rc->bottom - rc->top);
+    pD2DFactory->CreateHwndRenderTarget(D2D1::RenderTargetProperties(), D2D1::HwndRenderTargetProperties(hwnd, clientSize), &renderTarget);
+    CoInitializeEx(NULL, COINIT_MULTITHREADED); 
+    CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pIWICFactory));    
+}
+
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
 {
     const wchar_t CLASS_NAME[]  = L"Animation Library";
@@ -80,12 +88,15 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
             std::filesystem::path p = std::filesystem::current_path().remove_filename();
             p /= "assets";
 
-            std::unique_ptr<AnimationController> animationController = std::make_unique<AnimationController>(hwnd, &rc, p);
-            animationController->loadAnimation({ "run1.png", "run2.png", "run3.png", 
+            createResources(hwnd, &rc);
+
+
+            std::unique_ptr<AnimationController> animationController = std::make_unique<AnimationController>(renderTarget, hwnd, &rc, p);
+            animationController->loadAnimation(pIWICFactory, { "run1.png", "run2.png", "run3.png", 
                         "run4.png", "run5.png", "run4.png", "run3.png", "run2.png" },
                         "EXAMPLE1", GetTickCount(), 100);
 
-            animationController->loadAnimation({ "jump1.png", "jump2.png", "jump3.png", 
+            animationController->loadAnimation(pIWICFactory, { "jump1.png", "jump2.png", "jump3.png", 
                         "jump4.png", "jump5.png", "jump6.png", "jump7.png", "jump6.png", 
                         "jump5.png", "jump4.png", "jump3.png", "jump2.png", "jump1.png" },
                         "EXAMPLE2", GetTickCount(), 100);
@@ -93,8 +104,21 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
             animationController->setAnimation("EXAMPLE1");
             go = new GameObject(animationController.get(), 200.0f, 200.0f, 0.5f);
 
-            // int32_t startTime = GetTickCount();
-            // int32_t endTime;
+            std::unique_ptr<AnimationController> animationController2 = std::make_unique<AnimationController>(renderTarget, hwnd, &rc, p);
+            animationController2->loadAnimation(pIWICFactory, { "run1.png", "run2.png", "run3.png", 
+                        "run4.png", "run5.png", "run4.png", "run3.png", "run2.png" },
+                        "EXAMPLE1", GetTickCount(), 100);
+
+            animationController2->loadAnimation(pIWICFactory, { "jump1.png", "jump2.png", "jump3.png", 
+                        "jump4.png", "jump5.png", "jump6.png", "jump7.png", "jump6.png", 
+                        "jump5.png", "jump4.png", "jump3.png", "jump2.png", "jump1.png" },
+                        "EXAMPLE2", GetTickCount(), 100);
+            
+            animationController2->setAnimation("EXAMPLE1");
+            go2 = new GameObject(animationController2.get(), 600.0f, 600.0f, 0.5f);
+
+            int32_t startTime = GetTickCount();
+            int32_t endTime;
             while(isRunning)
             {
                 MSG msg;
@@ -108,13 +132,18 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
                     TranslateMessage(&msg);
                     DispatchMessageA(&msg);
                 }
-
-                go->animationController->animate(GetTickCount());
-
-                // endTime = GetTickCount();
-                // scene->updateState(hwnd, endTime, startTime);
-                // scene->renderState(hwnd, renderTarget, pTextFormat_);                    
-                // startTime = endTime;
+                endTime = GetTickCount();
+                if(endTime - startTime > 100)
+                {
+                    renderTarget->BeginDraw();
+                    renderTarget->Clear(D2D1::ColorF(D2D1::ColorF::Black));  
+                    go->animationController->animate(GetTickCount(), go->x, go->y);
+                    go2->animationController->animate(GetTickCount(), go2->x, go2->y);
+                    renderTarget->EndDraw();
+                    // scene->updateState(hwnd, endTime, startTime);
+                    // scene->renderState(hwnd, renderTarget, pTextFormat_);                    
+                    startTime = endTime;
+                }
             }
         }
     }
