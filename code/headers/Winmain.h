@@ -18,3 +18,4 @@
 #include "GameObject.h"
 
 static bool isRunning;
+GameObject* go;

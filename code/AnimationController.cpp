@@ -1,5 +1,10 @@
 #include "headers/AnimationController.h"
 
+AnimationController::AnimationController(HWND hwnd, RECT* rc, std::filesystem::path p): p(p)
+{
+    createResources(hwnd, rc);
+}
+
 HRESULT AnimationController::LoadBitmapFromFile(LPCWSTR uri, UINT destinationWidth, UINT destinationHeight, ID2D1Bitmap **ppBitmap)
 {
     IWICBitmapDecoder *pDecoder = NULL;
@@ -50,15 +55,41 @@ void AnimationController::createResources(HWND hwnd, RECT* rc)
     CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pIWICFactory));    
 }
 
-AnimationController::AnimationController(HWND hwnd, RECT* rc, std::filesystem::path p): p(p)
-{
-    createResources(hwnd, rc);
-}
-
 void AnimationController::loadAnimation(std::vector<std::string> strings, std::string name, DWORD creationTime, int timeFrame)
 {
     std::vector<ID2D1Bitmap*> bitmapVector = loadBitmapVector(strings);
     // use the bitmap vector ot create an animation, then add it to the controller's animations component
     Animation* animation = new Animation(bitmapVector, creationTime, timeFrame);
+    animation->currentBitmapIndex = 0;
     animationMap[name] = animation;
+    
 }
+
+
+void AnimationController::animate(int32_t currentTime) 
+{
+    renderTarget->BeginDraw();
+    renderTarget->Clear(D2D1::ColorF(D2D1::ColorF::Black));            
+    
+    //   initialize the bitmap the animation begins with
+    // as well as the animation that could initially be played by the controller
+
+    renderTarget->DrawBitmap(
+                currentAnimation->bitmaps[
+                currentAnimation->currentBitmapIndex], 
+                D2D1::RectF(100, 100, 200, 200));
+    
+    renderTarget->EndDraw();
+
+    if(currentTime - currentAnimation->timeSince >= currentAnimation->timeFrame)
+    {
+        currentAnimation->currentBitmapIndex = (currentAnimation->currentBitmapIndex + 1) % currentAnimation->bitmaps.size();
+        currentAnimation->timeSince = currentTime;
+    }
+}
+
+void AnimationController::setAnimation(std::string animationName)
+{
+    currentAnimation = animationMap[animationName];
+}
+AnimationController::~AnimationController(){}

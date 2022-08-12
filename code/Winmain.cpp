@@ -1,5 +1,18 @@
 #include "headers/Winmain.h"
 
+static void handleKeyDown(WPARAM wParam)
+{
+    if(wParam == VK_RIGHT) 
+    {
+        go->animationController->setAnimation("EXAMPLE2");
+    }
+    else if(wParam == VK_LEFT) 
+    {
+        go->animationController->setAnimation("EXAMPLE1");
+    }
+
+}
+
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     LRESULT result = 0;
@@ -19,6 +32,16 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             PostQuitMessage(0);
             break;
         }
+        case WM_KEYDOWN:
+        {
+            handleKeyDown(wParam);
+            return 0;
+        } 
+        //case WM_KEYUP:
+        //{
+            //handleKeyUp(wParam);
+          //  return 0;
+        //} 
         default: 
         {
             result = DefWindowProc(hwnd, uMsg, wParam, lParam);
@@ -57,22 +80,14 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
             std::filesystem::path p = std::filesystem::current_path().remove_filename();
             p /= "assets";
 
-
-            AnimationController* animationController = new AnimationController(hwnd, &rc, p);
+            std::unique_ptr<AnimationController> animationController = std::make_unique<AnimationController>(hwnd, &rc, p);
             animationController->loadAnimation({ "image1.png", "image2.png" }, "EXAMPLE1", GetTickCount(), 100);
             animationController->loadAnimation({ "image3.png", "image4.png" }, "EXAMPLE2", GetTickCount(), 100);
-            
-            
-            
-            animationController->animationMap["EXAMPLE1"]->currentBitmapIndex = 0;
-            animationController->currentAnimation = animationController->animationMap["EXAMPLE1"];
-            
-            GameObject* go = new GameObject(animationController, 200.0f, 200.0f, 0.5f);
-            // go->animation = animation1;
-
+            animationController->setAnimation("EXAMPLE1");
+            go = new GameObject(animationController.get(), 200.0f, 200.0f, 0.5f);
 
             // int32_t startTime = GetTickCount();
-            // int32_t endTime;            
+            // int32_t endTime;
             while(isRunning)
             {
                 MSG msg;
@@ -87,7 +102,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
                     DispatchMessageA(&msg);
                 }
 
-                go->animate(GetTickCount());
+                go->animationController->animate(GetTickCount());
 
                 // endTime = GetTickCount();
                 // scene->updateState(hwnd, endTime, startTime);
