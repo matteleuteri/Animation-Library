@@ -7,7 +7,6 @@
 #include <profileapi.h>
 #include <filesystem>
 #include <array>
-#include <dwrite.h>
 
 #include <d2d1.h>
 #include <vector>
@@ -19,3 +18,6 @@
 
 static bool isRunning;
 GameObject* go;
+GameObject* go2;
+IWICImagingFactory* pIWICFactory;
+ID2D1HwndRenderTarget* renderTarget;
