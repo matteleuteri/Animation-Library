@@ -5,8 +5,7 @@
 #include <vector>
 #include <string>
 #include <wincodec.h>
-class Animation
-{
+class Animation {
 public:
     std::vector<ID2D1Bitmap*> bitmaps;
     int currentBitmapIndex;

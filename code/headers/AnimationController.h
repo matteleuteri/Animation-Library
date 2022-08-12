@@ -6,8 +6,7 @@
 
 #include "Animation.h"
 
-class AnimationController
-{
+class AnimationController {
 public:
     std::map<std::string, Animation*> animationMap;
     Animation* currentAnimation;

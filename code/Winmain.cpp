@@ -81,8 +81,15 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
             p /= "assets";
 
             std::unique_ptr<AnimationController> animationController = std::make_unique<AnimationController>(hwnd, &rc, p);
-            animationController->loadAnimation({ "image1.png", "image2.png" }, "EXAMPLE1", GetTickCount(), 100);
-            animationController->loadAnimation({ "image3.png", "image4.png" }, "EXAMPLE2", GetTickCount(), 100);
+            animationController->loadAnimation({ "run1.png", "run2.png", "run3.png", 
+                        "run4.png", "run5.png", "run4.png", "run3.png", "run2.png" },
+                        "EXAMPLE1", GetTickCount(), 100);
+
+            animationController->loadAnimation({ "jump1.png", "jump2.png", "jump3.png", 
+                        "jump4.png", "jump5.png", "jump6.png", "jump7.png", "jump6.png", 
+                        "jump5.png", "jump4.png", "jump3.png", "jump2.png", "jump1.png" },
+                        "EXAMPLE2", GetTickCount(), 100);
+            
             animationController->setAnimation("EXAMPLE1");
             go = new GameObject(animationController.get(), 200.0f, 200.0f, 0.5f);
 
