@@ -7,13 +7,10 @@ Scene::Scene(int32_t currentTime, bool active, std::vector<AnimationController*>
 
 void Scene::drawBM(ID2D1HwndRenderTarget* renderTarget, GameObject *g)
 {
-    // renderTarget->DrawBitmap(g->animation->bitmaps[g->animation->currentBitmapIndex], 
-                // D2D1::RectF(g->x, g->y, g->x + g->width, g->y + g->height));
 }
 
 void Scene::updateState(HWND hwnd, int32_t endTime, int32_t startTime)
 {
-
 }
 
 void Scene::renderState(HWND hwnd, ID2D1HwndRenderTarget* renderTarget, IDWriteTextFormat* pTextFormat_)

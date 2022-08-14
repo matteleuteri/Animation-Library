@@ -49,7 +49,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     return result;
 }
 
-void createResources(HWND hwnd, RECT* rc) {
+void createResources(HWND hwnd, RECT* rc) 
+{
     ID2D1Factory* pD2DFactory = nullptr;
     D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &pD2DFactory);
     D2D1_SIZE_U clientSize = D2D1::SizeU(rc->right - rc->left, rc->bottom - rc->top);
@@ -93,7 +94,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
             std::unique_ptr<AnimationController> animationController = std::make_unique<AnimationController>(renderTarget, hwnd, &rc, p);
             animationController->loadAnimation(pIWICFactory, { "run1.png", "run2.png", "run3.png", 
-                        "run4.png", "run5.png", "run4.png", "run3.png", "run2.png" },
+                        "run4.png", "run4.png", "run3.png", "run2.png" },
                         "EXAMPLE1", GetTickCount(), 100);
 
             animationController->loadAnimation(pIWICFactory, { "jump1.png", "jump2.png", "jump3.png", 
