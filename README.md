@@ -4,4 +4,8 @@ I am creating a new repository just for loading and managing animations, because
 
 To Do List
 
-1. Get started.
+1. add flame animation around edges.
+
+2. fix keyframes from run animation that need to be removed.
+
+3. sort out what resources are prerequisite.
