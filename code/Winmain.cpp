@@ -15,7 +15,6 @@ static void handleKeyDown(WPARAM wParam)
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     LRESULT result = 0;
-    // POINT pt;
     switch (uMsg)
     {
         case WM_CLOSE: 
@@ -91,7 +90,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
             createResources(hwnd, &rc);
 
-
             auto animationController = std::make_unique<AnimationController>(renderTarget, hwnd, &rc, p);
             animationController->loadAnimation(pIWICFactory, { "run1.png", "run2.png", "run3.png", 
                         "run4.png", "run4.png", "run3.png", "run2.png" },
@@ -103,7 +101,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
                         "EXAMPLE2", GetTickCount(), 100);
             
             animationController->setAnimation("EXAMPLE1");
-            auto go = std::make_unique<GameObject>(animationController.get(), 200.0f, 200.0f, 0.5f);
+            go = std::make_unique<GameObject>(animationController.get(), 200.0f, 200.0f, 0.5f);
 
             int32_t startTime = GetTickCount();
             int32_t endTime;

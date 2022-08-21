@@ -17,7 +17,6 @@
 #include "GameObject.h"
 
 static bool isRunning;
-GameObject* go;
-GameObject* go2;
+std::unique_ptr<GameObject> go;
 IWICImagingFactory* pIWICFactory;
 ID2D1HwndRenderTarget* renderTarget;
