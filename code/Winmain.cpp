@@ -92,7 +92,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
             auto animationController = std::make_unique<AnimationController>(renderTarget, hwnd, &rc, p);
             animationController->loadAnimation(pIWICFactory, { "run1.png", "run2.png", "run3.png", 
-                        "run4.png", "run4.png", "run3.png", "run2.png" },
+                        "run4.png", "run5.png", "run4.png", "run3.png", "run2.png" },
                         "EXAMPLE1", GetTickCount(), 100);
 
             animationController->loadAnimation(pIWICFactory, { "jump1.png", "jump2.png", "jump3.png", 
